@@ -147,7 +147,7 @@ plagen.planificar = function(pos, tipo, largura, amplitude, nodes, borda, calc_m
 	
 	
 		-- Montar degrais de blocos (em direção a borda)
-		if borda == 0 then
+		if borda > 0 then
 			for degrau=1, borda do
 				--[[
 					y1 é a altura do degrau já construindo
