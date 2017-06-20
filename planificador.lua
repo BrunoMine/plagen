@@ -4,6 +4,7 @@
 -- Planificador
 --
 
+
 -- Metodo para pegar blocos mesmo nao carregados
 local function pegar_node(pos)
 	local node = minetest.get_node(pos)
@@ -25,6 +26,7 @@ local function calc_dif(y, y1, y2)
 		return y
 	end
 end
+
 
 -- Metodo para colocar um nivel de blocos (como um solo)
 local function montar_solo(pos, solo, subsolo, rocha)
@@ -51,7 +53,7 @@ end
 -- Encontrar altura de um bloco alvo (em uma coluna)
 local pegar_altura_solo = function(pos, alvos, amplitude)
 	local y = pos.y + amplitude
-	local resp = false
+	local resp = pos.y
 	while y >= pos.y - amplitude do
 		if table.maxn(minetest.find_nodes_in_area({x=pos.x,y=y,z=pos.z}, {x=pos.x,y=y,z=pos.z}, alvos)) == 1 then
 			resp = y
@@ -64,24 +66,70 @@ end
 
 
 -- Planificar uma area
+--[[
+	Esse metodo planifica uma area
+	Retornos:
+		<booleano> true para operação bem sucedida e false para nao sucedida
+	Argumentos:
+		<pos> do centro da area a ser planificada
+		<tipo> tipo de planificação
+			"quadrada" para planificar uma area quadrada
+		<largura> largura da area planificada
+		<amplitude> Quantidade de blocos para cima e para baixo em que ocorre a operação (colocação de blocos)
+		<nodes> É o material utilizado na planificação
+			{rocha="string", subsolo="string", solo="string"}
+		<borda> É quantos blocos a partir da area planificada serão afetado para formar os degrais
+		<calc_media> é booleano para planificar em uma faixa de altura média da area a planificar
+		<verif_mapa> Verificar se o mapa está gerado por segurança
+		
+  ]]
 local solos_gerais = {"group:soil", "group:stone", "group:sand"}
 plagen.planificar = function(pos, tipo, largura, amplitude, nodes, borda, calc_media, verif_mapa)
-
-	-- Adiquidir dados
-	if not pos 
-		or not pos.x
-		or not pos.y
-		or not pos.z
-		or not tipo
-		or not largura
-		or not amplitude 
-		or not nodes
-		or not nodes.solo 
-		or not nodes.subsolo 
-		or not nodes.rocha 
-		or verif_mapa == false
-	then return false end
+	-- Verificar dados
+	if not pos then
+		minetest.log("error", "[Plagen] Tabela 'pos' nula (em plagen.planificar)")
+		return false
+	end
+	if not tipo then
+		minetest.log("error", "[Plagen] String de 'tipo' nula (em plagen.planificar)")
+		return false
+	end
+	if not largura then
+		minetest.log("error", "[Plagen] Variavel 'largura' nula (em plagen.planificar)")
+		return false
+	end
+	if not amplitude then
+		minetest.log("error", "[Plagen] Variavel 'amplitude' nula (em plagen.planificar)")
+		return false
+	end
+	if not nodes then
+		minetest.log("error", "[Plagen] Tabela 'nodes' nula (em plagen.planificar)")
+		return false
+	end
+	-- Refino de dados
+	if tipo ~= "quadrada" then
+		minetest.log("error", "[Plagen] Tipo de planificacao "..dump(tipo).." invalida (em plagen.planificar)")
+		return false
+	end
+	if not nodes.rocha then
+		minetest.log("error", "[Plagen] Tabela 'nodes' nao tem 'rocha' definido (em plagen.planificar)")
+		return false
+	end
+	if not nodes.subsolo then
+		minetest.log("error", "[Plagen] Tabela 'nodes' nao tem 'subsolo' definido (em plagen.planificar)")
+		return false
+	end
+	if not nodes.solo then
+		minetest.log("error", "[Plagen] Tabela 'nodes' nao tem 'solo' definido (em plagen.planificar)")
+		return false
+	end
+	
+	-- Reajuste de dados
 	if not borda then borda = 0 end
+	
+	-- Criado variaveis auxiliares
+	
+	-- Materiais
 	local solo = nodes.solo
 	local subsolo = nodes.subsolo
 	local rocha = nodes.rocha
@@ -92,7 +140,6 @@ plagen.planificar = function(pos, tipo, largura, amplitude, nodes, borda, calc_m
 	-- Coordenadas da area plana
 	local minp = {x=pos.x-dist, z=pos.z-dist}
 	local maxp = {x=pos.x+dist, z=pos.z+dist}
-	--minetest.chat_send_all("inicialmente "..maxp.z)
 	
 	-- Altura da area plana
 	local altura = pos.y
@@ -134,7 +181,7 @@ plagen.planificar = function(pos, tipo, largura, amplitude, nodes, borda, calc_m
 	
 	
 	-- Inicia um processo de planagem
-	if tipo == "quadrado" then
+	if tipo == "quadrada" then
 	
 	
 		-- Montar faixa de terra plana
@@ -287,8 +334,6 @@ plagen.planificar = function(pos, tipo, largura, amplitude, nodes, borda, calc_m
 		
 			end
 		end
- 	else
- 		return false
  	end
  	
  	

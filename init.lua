@@ -19,4 +19,5 @@ plagen = {}
 -- Carregar scripts
 notificar("Carregando scripts...")
 dofile(modpath.."/planificador.lua")
+dofile(modpath.."/nodes.lua")
 notificar("OK")
