@@ -31,7 +31,7 @@ local plagen = dofile(minetest.get_modpath("my_modname").."/lib/plagen.lua")
 
 ### Métodos
 ```txt
-plagen.planificar = function(pos, tipo, largura, amplitude, nodes, borda, calc_media, verif_mapa) : Planificar uma area e gerar degrais ao redor para suavizar a topografia 
+plagen.planificar(pos, tipo, largura, amplitude, nodes, borda, calc_media, verif_mapa) : Planificar uma area e gerar degrais ao redor para suavizar a topografia 
 	`pos` [tabela] do centro da area a ser planificada
 	`tipo` [string] tipo de planificação
 		"quadrada" para planificar uma area quadrada
