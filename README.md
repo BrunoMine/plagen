@@ -26,7 +26,7 @@ Você pode montar of métodos em uma variavel global ou local, ambos irão funci
 ### Pegando métodos
 ```lua
 -- Pegando métodos do banco de dados
-local bd = dofile(minetest.get_modpath("my_modname").."/lib/plagen.lua")
+local plagen = dofile(minetest.get_modpath("my_modname").."/lib/plagen.lua")
 ```
 
 ### Métodos
